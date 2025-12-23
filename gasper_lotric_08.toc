@@ -1,0 +1,10 @@
+\babel@toc {slovene}{}
+\contentsline {section}{\numberline {1}Uvod}{2}%
+\contentsline {subsection}{\numberline {1.1}Naloga}{3}%
+\contentsline {subsection}{\numberline {1.2}Dodatna naloga}{3}%
+\contentsline {section}{\numberline {2}Neskončna potencialna jama}{3}%
+\contentsline {subsection}{\numberline {2.1}Strelska metoda}{4}%
+\contentsline {subsubsection}{\numberline {2.1.1}Lastne vrednosti in funkcije}{5}%
+\contentsline {subsection}{\numberline {2.2}Diferenčna metoda}{6}%
+\contentsline {section}{\numberline {3}Končna potencialna jama}{7}%
+\contentsline {section}{\numberline {4}Dodatna naloga}{9}%

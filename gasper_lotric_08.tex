@@ -1,0 +1,372 @@
+\documentclass[a4paper, 12pt, slovene]{article}
+\usepackage[slovene]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{caption}
+\captionsetup{font=footnotesize}
+\usepackage{fullpage}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{subcaption}
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+\newcommand*\Diff[1]{\mathop{}\!\mathrm{d^#1}}
+\newcommand*\difft{\mathop{}\!\ddot{ }}
+\usepackage{float}
+\usepackage{mathrsfs}
+\usepackage{fancyvrb}
+
+
+\newcommand{\Ai}{\mathrm{Ai}}
+\newcommand{\Bi}{\mathrm{Bi}}
+
+\renewcommand{\Re}{\mathop{\rm Re}\nolimits}
+\renewcommand{\Im}{\mathop{\rm Im}\nolimits}
+\newcommand{\Tr}{\mathop{\rm Tr}\nolimits}
+\newcommand{\diag}{\mathop{\rm diag}\nolimits}
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\ddd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\lag}{\mathcal{L}\!}
+\newcommand{\ham}{\mathcal{H}\!}
+\newcommand{\four}[1]{\mathcal{F}\!\left(#1\right)}
+\newcommand{\bigO}[1]{\mathcal{O}\!\left(#1\right)}
+\newcommand{\sh}{\mathop{\rm sinh}\nolimits}
+\newcommand{\ch}{\mathop{\rm cosh}\nolimits}
+\renewcommand{\th}{\mathop{\rm tanh}\nolimits}
+\newcommand{\erf}{\mathop{\rm erf}\nolimits}
+\newcommand{\erfc}{\mathop{\rm erfc}\nolimits}
+\newcommand{\sinc}{\mathop{\rm sinc}\nolimits}
+\newcommand{\rect}{\mathop{\rm rect}\nolimits}
+\newcommand{\ee}[1]{\cdot 10^{#1}}
+\newcommand{\inv}[1]{\left(#1\right)^{-1}}
+\newcommand{\invf}[1]{\frac{1}{#1}}
+\newcommand{\sqr}[1]{\left(#1\right)^2}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\thalf}{\tfrac{1}{2}}
+\newcommand{\pd}{\partial}
+\newcommand{\Dd}[3][{}]{\frac{\ddd^{#1} #2}{\ddd #3^{#1}}}
+\newcommand{\Pd}[3][{}]{\frac{\pd^{#1} #2}{\pd #3^{#1}}}
+\newcommand{\avg}[1]{\left\langle#1\right\rangle}
+\newcommand{\norm}[1]{\left\Vert #1 \right\Vert}
+\newcommand{\braket}[2]{\left\langle #1 \vert#2 \right\rangle}
+\newcommand{\obraket}[3]{\left\langle #1 \vert #2 \vert #3 \right \rangle}
+\newcommand{\hex}[1]{\texttt{0x#1}}
+
+\renewcommand{\iint}{\mathop{\int\mkern-13mu\int}}
+\renewcommand{\iiint}{\mathop{\int\mkern-13mu\int\mkern-13mu\int}}
+\newcommand{\oiint}{\mathop{{\int\mkern-15mu\int}\mkern-21mu\raisebox{0.3ex}{$\bigcirc$}}}
+
+\newcommand{\wunderbrace}[2]{\vphantom{#1}\smash{\underbrace{#1}_{#2}}}
+
+\renewcommand{\vec}[1]{\overset{\smash{\hbox{\raise -0.42ex\hbox{$\scriptscriptstyle\rightharpoonup$}}}}{#1}}
+\newcommand{\bec}[1]{\mathbf{#1}}
+
+
+
+\begin{document}
+
+\begin{titlepage}
+\title{\textsc{Robni problem lastnih vrednosti} \\[1ex] \large Osma naloga pri predmetu Matematično-fizikalni praktikum}
+\author{Gašper Lotrič, 28191019}
+\date{20. december 2021}
+
+\maketitle
+\end{titlepage}
+
+\tableofcontents
+\pagebreak
+
+
+\section{Uvod}
+
+Pri robnem problemu lastnih vrednosti poznamo diferencialno enačbo in nekaj robnih pogojev (običajno vsaj toliko, kolikor je red enačbe) Za rešitev problema moramo v splošnem v enem zamahu določiti tako (lastne) funkcije, ki ustrezajo danim robnim pogojem, kot (lastne) vrednosti, ki skupaj zadoščajo diferencialni enačbi. Reševanje robnih problemov je zato lahko bistveno bolj zapleteno kot integracija začetnih problemov. \par\vspace{5mm}
+
+
+Numerično bomo reševali stacionarno Schr\"odingerjevo enačbo
+\begin{equation*}
+-\frac{\hbar^2}{2m}\,\Dd[2]{\psi}{x} + V(x)\psi = E\psi  
+\end{equation*}
+za neskončno potencialno jamo ($V(-a/2 < x < a/2)=0$ in $V(|x|\ge a/2)\to\infty$) ter za končno potencialno jamo
+($V(|x|\ge a/2)=V_0$), za kateri poznamo analitične rešitve; glej Strnad, {\sl Fizika II\/}.  Dva značilna pristopa, diferenčna metoda in strelska metoda, nas bosta pripravila na resnejše probleme, za katere analitičnih rešitev ne poznamo. \par\vspace{5mm}
+
+Pri {\sl diferenčni metodi\/} razdelimo interval $[-a/2,a/2]$ na $N$ točk ($x_i = -a/2 + ia/N$) in prepišemo drugi krajevni odvod v drugo diferenco, tako da ima brezdimenzijska enačba obliko
+\begin{equation*}
+\frac{\psi_{i-1} - 2\psi_i + \psi_{i+1}}{h^2} + E\psi_i = 0  
+\end{equation*}
+oziroma
+\begin{equation*}
+\psi_{i-1} - (2-\lambda)\psi_i + \psi_{i+1} = 0 \>,  
+\end{equation*}
+kjer je $\lambda=Eh^2=k^2h^2$.  Diskretizirati je treba tudi robna pogoja pri $x=-a/2$ in $x=a/2$, ki sta v splošnem (in tudi pri končni jami) mešanega tipa,
+\begin{align*}
+c_1 \psi_0 + c_2 \frac{\psi_1 - \psi_{-1}}{2h} =& 0 \>, \\
+d_1 \psi_N + d_2 \frac{\psi_{N+1} - \psi_{N-1}}{2h} =& 0 \>,
+\end{align*}
+medtem ko sta pri neskončni jami preprostejša, $\psi_0=\psi_N=0$. V primerih potencialnih jam tako dobimo tridiagonalni sistem $N$ oziroma $N-1$ linearnih enačb
+\begin{equation*}
+A \underline{\psi} = \lambda \underline{\psi}   
+\end{equation*}
+za lastne vektorje $\underline{\psi}$ in lastne vrednosti $\lambda$, ki ga rešujemo z diagonalizacijo. \par\vspace{5mm}
+
+
+Pri {\sl strelski metodi\/} začnemo s ``kosinusnim'' začetnim pogojem v izhodišču $\psi(0)=1$, $\psi'(0)=0$ ali ``sinusnim'' pogojem $\psi(0)=0$, $\psi'(0)=1$, nato pa z nekim izbranim $E$ diferencialno enačbo s poljubno integracijsko shemo (npr.~RK4) integriramo do roba $x=a/2$ in tam preverimo, ali je izpolnjen drugi robni pogoj, $\psi(a/2)=0$. Vrednost $E$ spreminjamo tako dolgo, dokler robni pogoj ni izpolnjen do zahtevane natančnosti, in tako dobimo sode in lihe rešitve enačbe skupaj z ustreznimi lastnimi vrednostmi energije.
+
+
+\subsection{Naloga}
+Določi nekaj najnižjih lastnih funkcij in lastnih vrednosti za neskončno potencialno jamo z diferenčno metodo in metodo streljanja, lahko pa poskusiš še iterativno in s kakšno drugo metodo. Problem končne jame je s strelsko metodo le trivialna posplošitev problema neskončne jame: spremeni se le robni pogoj pri $x=a/2$, ki ima zaradi zahteve po zveznosti in zvezni odvedljivosti valovne funkcije zdaj obliko $c_1\psi(a/2) + c_2\psi'(a/2) = 0$. Kaj ima pri diferenčni metodi večjo vlogo pri napaki: končna natančnost diference, s katero aproksimiramo drugi odvod, ali zrnatost intervala (končna razsežnost matrike, ki jo diagonaliziramo)?
+
+
+\subsection{Dodatna naloga}
+Določi nekaj najnižjih lastnih funkcij $\psi$ in lastnih vrednosti $E=k^4$ diferencialne enačbe
+\begin{equation*}
+\Dd[4]{\psi}{x} - E\psi = 0
+\end{equation*}
+(pozor, minus) na intervalu $[-a/2,a/2]$ z robnimi pogoji
+\begin{equation*}
+\psi(\pm a/2) = \psi''(\pm a/2) = 0
+\end{equation*}
+z diferenčno metodo oziroma diagonalizacijo.  (Strelska metoda pri robnih problemih četrtega reda ni najbolj primerna.) Namesto četrtega odvoda uporabi izraz za četrto diferenco, tako da ima $i$-ta diferenčna enačba obliko
+\begin{equation*}
+\psi_{i-2} - 4\psi_{i-1} + 6\psi_i - 4\psi_{i+1} + \psi_{i+2}
+= \underbrace{h^4k^4}_\lambda \psi_i \>.  
+\end{equation*}
+Ko diskretiziraš še robne pogoje, podobno kot pri enačbi drugega reda rešuješ petdiagonalni sistem linearnih enačb.
+
+
+\section{Neskončna potencialna jama}
+Rešitve stacionarne Schr\"odingerjeve enačbe za neskončno potencialno jamo širine $a$ so lastne funkcije oblike
+\begin{equation}
+\psi_n = \sqrt{\frac{2}{a}}\cdot\sin\left(n\pi\frac{x}{a}+n\pi\frac{1}{2}\right).
+\end{equation}
+s pripadajočimi lastnimi vrednostimi - enregijami $E_n = \frac{\hbar^2\pi^2n^2}{2ma^2}$. V nadaljevanju te naloge bom energije obravnaval kot faktorje prve lastne energije $E_1$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{grafi/analiticne-resitve.pdf}
+\caption{Analitične rešitve neskončne potencialne jame.}
+\label{f:ana-ipw}
+\end{figure}
+
+
+
+\subsection{Strelska metoda}
+
+Iskanje lastnih funkcij s strelsko metodo se je izkazalo za problematično, saj metoda teži k najenostavnejšem rezultatu. V primeru potencialne jame, kjer sta levi in desni robni pogoj enaka $\psi(x=-\frac{a}{2}) = \psi(x=\frac{a}{2}) = 0$, je metoda konvergirala proti ravni črti $\psi(x) = 0$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{grafi/shootingto0.pdf}
+\caption{Iteracije strelske metode pri reševanju tega problema. Po dveh iteracijah metoda konvergira profi nič.}
+\label{f:shoot-0}
+\end{figure}
+
+Zato sem se odločil, da bom problem razdelil na polovico in si za začetek pogledal, kaj se dogaja na dasni strani jame ($x > 0$). Za energije med $E_1$ in $5E_1$ (slika \ref{f:ipw-shoot-r}) oziroma $E_1$ in $20E_1$ (slika \ref{f:ipw-shoot-r200}) sem narisal pripadajoče funkcije in prvih nekaj analitično izračunanih lastnih funkcij potencialne jame.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{grafi/iwp-halfshootr-49.0.pdf}	\caption{Desna polovica potencialne jame s strelsko metodo. Energije so ponazorjene z bravno shemo, modra predstavlja najnižjo, rdeča pa najvišjo energijo. Prva in druga lastna funkcija sta narisani s črno.}
+\label{f:ipw-shoot-r}
+\end{figure}
+
+S takim reševanjem naletimo na nov problem, saj je treba funkcije razširiti na celotno območje potencialne jame. Ta problem je za izmenično sode in lihe lastne funkcije trivialen.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{grafi/iwp-halfshootr-198.0.pdf}
+\caption{Desna polovica potencialne jame s strelsko metodo. Energije so ponazorjene z bravno shemo, modra predstavlja najnižjo, rdeča pa najvišjo energijo. Lastne funkcije so narisane s črno.}
+\label{f:ipw-shoot-r200}
+\end{figure}
+
+
+
+\subsubsection{Lastne vrednosti in funkcije}
+Iskanja lastnih vrednosti sem se lotil na zelo enostaven način. Z metodo Runge-Kutta četrtega reda sem za različne energije ugibal rešitve in gledal napako rešitve na drugem robu. Ničle te funkcije so mi dale lastne vrednosti. Hitreje bi lahko ta problem rešil tudi z bisekcijo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{grafi/eigenval.pdf}
+\caption{Iskanje lastnih energij delca v potencialni jami s streljanjem.}
+\label{f:evalues-sh}
+\end{figure}
+
+\begin{table}
+\centering
+\begin{tabular}{|cc|}
+\hline
+$n$ & $E_n$ \\
+\hline
+1 & $1\cdot E_1$	\\
+2 & $4\cdot E_1$	\\
+3 & $9\cdot E_1$	\\
+4 & $16\cdot E_1$	\\
+\hline
+\end{tabular}
+\caption{Tabela lastnih vrednosti izračunanih s strelsko metodo.}
+\label{t:ev-sh}
+\end{table}
+
+Zdaj, ko poznam lastne energije, lahko narišem tudi njim pripadajoče funkcije in preverim, da se ujemajo z analitičnimi pričakovanji (slika 6).
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.475\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/eigfunc-sh.pdf}
+	\caption{Lastne funkcije neskončne potencialne jame.}
+	\label{f:efuncs-sh}
+\end{subfigure}
+\begin{subfigure}{0.475\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/vjami-eigfunc-sh.pdf}
+	\caption{Funkcije pri svojih energijah v jami.}
+	\label{f:efuncjama}
+\end{subfigure}
+\label{f:neskoncnajama}
+\caption{Lastne funkcije neskončne potencialne jame izračunane s strelsko metodo.}
+\end{figure}
+
+
+\subsection{Diferenčna metoda}
+Istega problema sem se lotil še diferenčne metode. Izračun lastnih funkcij mi je dal isti rezultat (slika \ref{f:efuncs-dif}), prikazal pa sem tudi obnašanje absolutne napake lastnih funkcij. Napaka z večanjem zaporednega števila lastne funkcije $n$ raste.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.475\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/eigfunc-dif-1000.pdf}
+	\caption{Lastne funkcije.}
+	\label{f:efd}
+\end{subfigure}
+\begin{subfigure}{0.475\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/dif-err-1000.pdf}
+	\caption{Napake lastnih funkcij.}
+	\label{f:efderr}
+\end{subfigure}
+\caption{Lastne funkcije neskončne potencialne jame izračunane z diferenčno metodo in njihove napake. $N = 1000$.}
+\label{f:efuncs-dif}
+\end{figure}
+
+Preveriti se splača tudi obnašanje napake v odvisnosti od velikosti matrike $A$, saj je računanje z matrikami ponavadi zamudno. Na sliki \ref{f:dif-err-t} sem prikazal časovno zahtevnost računanja in obnašanje napake.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.325\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/napake.pdf}
+	\caption{Napaka v odvisnosti od števila točk $N$.}
+	\label{f:err-N}
+\end{subfigure}
+\begin{subfigure}{0.325\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/timer.pdf}
+	\caption{Časovna zahtevnost v odvisnosti od števila točk $N$.}
+	\label{f:timer-N}
+\end{subfigure}
+\begin{subfigure}{0.325\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/natancnost-cas-log.pdf}
+	\caption{Časovna zahtevnost v odvisnosti od željene natančnosti v logaritemski skali.}
+	\label{f:timer-err}
+\end{subfigure}
+\caption{Časovna zahtevnost in natančnost diferenčne metode.}
+\label{f:dif-err-t}
+\end{figure}
+
+
+
+\section{Končna potencialna jama}
+Za iskanje lastnih funkcij končne potencialne jame sem uporabil strelsko metodo. Lastne energije prvih štirih lastnih funkcij končne potencialne jame s potencialnom
+\[ V = \begin{cases} 
+      0 & x < -0.5a \\
+      -V_0 & -0.5a \leq x\leq 0.5a \\
+      0 & x > 0.5a 
+   \end{cases}
+\]
+, kjer sem za $V_0$ uporabil štiri različne vrenosti (50, 100, 150, 200). $E_0$ predstavlja lastno energijo najnižjega stanja v končni potencialni jami.
+
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.475\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/fwp-halfshootr-V200-150.0.pdf}
+	\caption{Funkcije končne potencialne jame za energije.}
+	\label{f:efefpwd}
+\end{subfigure}
+\begin{subfigure}{0.475\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/eigenval-f.pdf}
+	\caption{Lastne vrednosti končne potencialne jame za $V_0 = 200$.}
+	\label{f:finalvalues}
+\end{subfigure}
+\caption{Iskanje lastnih vrednosti v končni potencialni jami s potencialnom $V_0=200$.}
+\label{f:efuncs-fin}
+\end{figure}
+
+S pomočjo teh lastnih vrednosti pa sem lahko narisal še lastne funkcije te končne potencialne jame (slika \ref{f:koncna}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{grafi/eigfunc-fin-V200.pdf}
+\caption{Lastne funkcije končne potencialne jame pri $V_0=200$.}
+\label{f:koncna}
+\end{figure}
+
+Funkcije se podobne tistim iz neskončne potencialne jame. Tokrat se nadaljujejo tudi izven jame, kjer imajo eksponentno padajoče oziroma naraščajoče repe. Funkcija višjega reda (z višjo energijo) vstopi v jamo bližje vrhu, medtem ko je prva lastna funkcija skoraj enaka tisti v neskončni potencialni jami. \par\vspace{5mm}
+
+Pogledal sem si še, kako se funkcije spreminjajo pri različnih globinah potencialne jame. Iz slike 11 je razvidno, da se bistvene spremembe v obliki pojavijo šele, ko se lastna energija bliža $V_0$. Drugače razlike lahko opazimo le v različnih lastnih energijah.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.475\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/vjami-eigfunc-fin-V50.pdf}
+	\caption{Lastne funkcije potencialne jame z $V_0=50$.}
+	\label{f:50}
+\end{subfigure}
+\begin{subfigure}{0.475\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/vjami-eigfunc-fin-V100.pdf}
+	\caption{Lastne funkcije potencialne jame z $V_0=100$.}
+	\label{f:100}
+\end{subfigure}
+\begin{subfigure}{0.475\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/vjami-eigfunc-fin-V150.pdf}
+	\caption{Lastne funkcije potencialne jame z $V_0=150$.}
+	\label{f:150}
+\end{subfigure}
+\begin{subfigure}{0.475\textwidth}
+	\centering
+	\includegraphics[width=0.95\textwidth]{grafi/vjami-eigfunc-fin-V200.pdf}
+	\caption{Lastne funkcije potencialne jame z $V_0=200$.}
+	\label{f:200}
+\end{subfigure}
+\label{f:koncnajama}
+\caption{Prve štiri lastne funkcije v različno globokih potencialnih jamah.}
+\end{figure}
+
+\section{Dodatna naloga}
+Dodatno nalogo, kjer iščem lastne funkcije diferencialne enačbe četrtega reda, bom reševal z diferenčno metodeo. Rešitev se od prejšnje loči le v drugačni postavitvi matrike $A$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{grafi/dodatna-4.pdf}
+\caption{Lastne funkcije dodatnega problema.}
+\label{f:dodatna}
+\end{figure}
+
+Lastne funkcije diferencialne enačbe $\frac{\diff^4\psi}{\diff x^4} - E\psi = 0$ so zelo podobne tistim iz neskončne potencialne jame. Razlikujejo se v tem, da imajo lastne funkcije enačbe četrtega reda na robovih odvod $\psi'$ enak 0. Manj opazna razlika pa se pokaže, če opazujemo amplitude masimumov in minumumov pri višjih funkcijah, kjer opazimo rahlo znižanje na sredini. 
+
+
+
+
+\end{document}
